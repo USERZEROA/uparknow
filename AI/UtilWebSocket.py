@@ -1,24 +1,35 @@
-import asyncio
 import websockets
 
-WEBSOCKET_SERVER_URL = "wss://84b7-2601-681-4d00-2e30-202f-d912-4854-207b.ngrok-free.app/ws-camera"
+class WebSocketClient:
+    def __init__(self, server_url):
+        self.server_url = server_url
+        self.websocket = None
 
-async def websocket_client():
-    try:
-        async with websockets.connect(WEBSOCKET_SERVER_URL) as websocket:
-            print(f"Connected to {WEBSOCKET_SERVER_URL}")
+    async def connect(self):
+        try:
+            self.websocket = await websockets.connect(self.server_url)
+            print(f"Connected to {self.server_url}")
+        except Exception as e:
+            print(f"unable to connect {self.server_url}：{e}")
+            self.websocket = None
 
-            message = "Hello from Python WebSocket client!"
-            print(f"Sending: {message}")
-            await websocket.send(message)
+    async def send_message(self, message):
+        if self.websocket:
+            try:
+                print(f"send message:{message}")
+                await self.websocket.send(message)
+                response = await self.websocket.recv()
+                print(f"get response：{response}")
+                return response
+            except websockets.exceptions.ConnectionClosedError as e:
+                print(f"WebSocket closed. ERR: {e}")
+            except Exception as e:
+                print(f"Err during sending or geting:{e}")
 
-            response = await websocket.recv()
-            print(f"Received: {response}")
-
-    except websockets.exceptions.ConnectionClosedError as e:
-        print(f"WebSocket connection closed with error: {e}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    asyncio.run(websocket_client())
+    async def close(self):
+        if self.websocket:
+            try:
+                await self.websocket.close()
+                print("WebSocket is closed")
+            except Exception as e:
+                print(f"Error：{e}")

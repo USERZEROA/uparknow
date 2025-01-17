@@ -1,1 +1,3 @@
-Editing
+pip install opencv-python
+pip install torchvision
+pip install transformers
