@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 
-WEBSOCKET_SERVER_URL = "wss://3750-2601-681-4d00-2e30-4028-56fb-d55b-5fbb.ngrok-free.app/ws-camera"
+WEBSOCKET_SERVER_URL = "wss://84b7-2601-681-4d00-2e30-202f-d912-4854-207b.ngrok-free.app/ws-camera"
 
 async def websocket_client():
     try:
