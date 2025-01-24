@@ -28,7 +28,8 @@ async def monitor_parking_lot(monitor, websocket_client, start_time, duration):
 
 
 async def main():
-    websocket_url = "ws://localhost:8765"
+    #websocket_url = "ws://localhost:8765"
+    websocket_url = "wss://9764-2601-681-4d00-2e30-e8dd-528d-8a00-ee18.ngrok-free.app/ws-camera"
     websocket_client = WebSocketClient(websocket_url)
 
     await websocket_client.connect()

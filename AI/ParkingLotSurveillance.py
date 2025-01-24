@@ -21,7 +21,7 @@ class ParkingLotMonitor:
         self.total_seconds = int(self.total_frames / self.fps)
         self.initial_time = initial_time
         self.lot_number = lot_number
-
+        self.parking_status = None
         self.initial_frame_number = int(self.initial_time * self.fps)
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.initial_frame_number)
 
@@ -54,9 +54,37 @@ class ParkingLotMonitor:
         iou = interArea / float(boxAArea + boxBArea - interArea)
         return iou
 
+    def get_changed_availability(self, new_status):
+        changes = []
+
+        if self.parking_status is None:
+            for position, new_data in new_status.items():
+                row, column = position
+                changes.append({
+                    "role": 1,
+                    "parkingLot": self.lot_number,
+                    "parkingSpacePosition": [row, column],
+                    "availability": new_data["availability"]
+                })
+        else:    
+            for position, new_data in new_status.items():
+                new_availability = new_data["availability"]
+                
+                old_availability = self.parking_status.get(position, {}).get("availability", None)
+                
+                if new_availability != old_availability:
+                    row, column = position
+                    changes.append({
+                        "role": 1,
+                        "parkingLot": self.lot_number,
+                        "parkingSpacePosition": [row, column],
+                        "availability": new_availability
+                    })
+        self.parking_status = new_status
+        return changes
+
     def process_frame(self, time_in_seconds, show_frame=False):
         """Process a frame at a given time and return parking information."""
-        messages = []
         frame_number = int(self.fps * time_in_seconds)
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
         ret, frame = self.cap.read()
@@ -88,22 +116,25 @@ class ParkingLotMonitor:
                 y2 = int((y_center + height / 2) * frame.shape[0])
                 detected_boxes.append((x1, y1, x2, y2))
 
-        parking_status = [
-            {"row": row, "column": col, "parked": False}
+        parking_status = {
+            (row, col): {
+                "row": row,
+                "column": col,
+                "role": 1,
+                "parkingLot": self.lot_number,
+                "availability": 1
+            }
             for row in range(1, 3)
             for col in range(1, 14)
-        ]
+        }
 
         for detected_box in detected_boxes:
             for parking_box in self.parking_boxes:
                 parking_box_coords = [parking_box["x1"], parking_box["y1"], parking_box["x2"], parking_box["y2"]]
                 iou = self.calculate_iou(detected_box, parking_box_coords)
-                if iou > 0.5:
-                    row, column = parking_box["row"], parking_box["column"]
-                    for status in parking_status:
-                        if status["row"] == row and status["column"] == column:
-                            status["parked"] = True
-        
+                row, column = parking_box["row"], parking_box["column"]
+                if iou > 0.5: parking_status[(row, column)]["availability"] = 0
+
         if show_frame:
             # Draw bounding boxes on frame, FOR DEBUG ONLY
             for parking_box in self.parking_boxes:
@@ -123,20 +154,8 @@ class ParkingLotMonitor:
             cv2.destroyAllWindows()
 
         print(f"\nTime:ParkingLot {self.lot_number} is now on {time_in_seconds} seconds")
-        messages=[]
-        for status in parking_status:
-            row = status["row"]
-            column = status["column"]
-            availability = 1 if status["parked"] else 0
-            message = {
-                "role": 1,
-                "parkingLot": self.lot_number,
-                "parkingSpacePosition": [row, column],
-                "availability": availability
-            }
-            messages.append(json.dumps(message))
+        messages = self.get_changed_availability(parking_status)
         return messages
-
 
     def close(self):
         """Release video resources."""
