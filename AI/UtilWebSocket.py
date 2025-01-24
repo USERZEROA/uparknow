@@ -19,7 +19,8 @@ class WebSocketClient:
                 print(f"send message:{message}")
                 await self.websocket.send(message)
                 response = await self.websocket.recv()
-                print(f"get response：{response}")
+                if response != "OK":
+                    print(f"UNEXPECTED server response：{response}")
                 return response
             except websockets.exceptions.ConnectionClosedError as e:
                 print(f"WebSocket closed. ERR: {e}")

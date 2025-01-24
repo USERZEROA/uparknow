@@ -1,48 +1,54 @@
 import asyncio
+import json
 from UtilWebSocket import WebSocketClient
-import random
-
-async def event_pschanged():
-    while True:
-        await asyncio.sleep(random.randint(1, 3))
-        event_happened = random.choice([True, False])
-        if event_happened:
-            print("event_happened")
-            yield True
-        else:
-            yield False
+from ParkingLotSurveillance import ParkingLotMonitor
+import time
 
 
-async def main_loop():
-    WEBSOCKET_SERVER_URL = "wss://0cc5-2601-681-4d00-2e30-18e0-653b-7419-d644.ngrok-free.app/ws-camera"
-    client = WebSocketClient(WEBSOCKET_SERVER_URL)
+async def monitor_parking_lot(monitor, websocket_client, start_time, duration):
+    """
+    Monitor the parking lot and send updates via WebSocket.
+    Ensures that one frame is processed every second, regardless of the processing time.
+    """
+    current_time = start_time
+    end_time = start_time + duration
 
-    await client.connect()
+    while current_time < end_time:
+        start = time.time() 
+        
+        messages = monitor.process_frame(current_time)
+        for message in messages:
+            await websocket_client.send_message(json.dumps(message))
 
-    if not client.websocket:
-        print("Connect Fail.")
+        current_time += 1
+        elapsed = time.time() - start
+        sleep_time = max(0, 1 - elapsed) 
+        if sleep_time == 0: print("WARNIGN: Taking too many time(>1sec) for processing 1 frame. Timeout handling.")
+        await asyncio.sleep(sleep_time)
+
+
+async def main():
+    websocket_url = "ws://localhost:8765"
+    websocket_client = WebSocketClient(websocket_url)
+
+    await websocket_client.connect()
+    if not websocket_client.websocket:
+        print("WebSocket connection failed.")
         return
 
+    monitor1 = ParkingLotMonitor(
+        video_path="Parkng_Lot_Surveillance_Video.mp4",
+        json_path="flipped_car_coordinates_with_parking_positions.json",
+        lot_number=1,
+        initial_time=280
+    )
+
     try:
-        event_gen = event_pschanged()
-
-        async for event in event_gen:
-            if event: 
-                messages = [
-                    """{ "role": 1, "parkingLot": 1, "parkingSpacePosition": [1, 1], "availability": 1 }""",
-                    """{ "role": 1, "parkingLot": 2, "parkingSpacePosition": [1, 2], "availability": 1 }""",
-                    """{ "role": 1, "parkingLot": 2, "parkingSpacePosition": [1, 1], "availability": 0 }""",
-                    """{ "role": 1, "parkingLot": 2, "parkingSpacePosition": [1, 1], "availability": 1 }"""
-                ]
-
-                selected_message = random.choice(messages)
-                await client.send_message(selected_message)
-
-    except asyncio.CancelledError:
-        print("Main loop is end.")
+        await monitor_parking_lot(monitor1, websocket_client, start_time=280, duration=20)
     finally:
-        await client.close()
+        monitor1.close()
+        await websocket_client.close()
 
 
 if __name__ == "__main__":
-    asyncio.run(main_loop())
+    asyncio.run(main())
