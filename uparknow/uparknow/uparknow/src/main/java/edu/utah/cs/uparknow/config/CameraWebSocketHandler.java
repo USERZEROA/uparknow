@@ -21,12 +21,11 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
     // 用来给前端发送更新的 handler
     private FrontEndWebSocketHandler frontEndHandler;
 
-    // 一个构造方法
     public CameraWebSocketHandler(ParkingSpacesRepository parkingSpacesRepository) {
         this.parkingSpacesRepository = parkingSpacesRepository;
     }
 
-    // 另一个构造方法，可同时注入 frontEndHandler
+    // 构造方法，可同时注入 frontEndHandler
     public CameraWebSocketHandler(
             ParkingSpacesRepository parkingSpacesRepository,
             FrontEndWebSocketHandler frontEndHandler
@@ -37,7 +36,7 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 先给摄像头/设备回一个 "OK" 表示接收成功
+        // 先给摄像头回一个 "OK"
         session.sendMessage(new TextMessage("OK"));
 
         String jsonPayload = message.getPayload();

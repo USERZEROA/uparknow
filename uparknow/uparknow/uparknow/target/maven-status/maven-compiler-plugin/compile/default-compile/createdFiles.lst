@@ -38,5 +38,6 @@ edu\utah\cs\uparknow\service\ManagersService.class
 edu\utah\cs\uparknow\controller\ManagersController.class
 edu\utah\cs\uparknow\repository\LocationsRepository.class
 edu\utah\cs\uparknow\service\LocationsService.class
+edu\utah\cs\uparknow\model\FrontEndSpacesDTO.class
 edu\utah\cs\uparknow\model\ClosuresId.class
 edu\utah\cs\uparknow\model\ParkingSpaces.class

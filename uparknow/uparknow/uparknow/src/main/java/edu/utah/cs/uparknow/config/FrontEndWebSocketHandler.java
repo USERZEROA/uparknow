@@ -13,6 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.utah.cs.uparknow.model.FrontEndSpacesDTO;
 import edu.utah.cs.uparknow.model.ParkingSpaces;
 import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
 
@@ -32,7 +33,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
         sessions.add(session);
         System.out.println("New FrontEnd connection: " + session.getId());
 
-        // 一旦前端连接，就给它发送当前数据库的初始化数据
+        // 一旦前端连接，发送当前数据库的初始化数据
         sendAllSpacesTo(session);
     }
 
@@ -42,11 +43,54 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
         System.out.println("FrontEnd connection closed: " + session.getId());
     }
 
-    // 如果前端会发消息给后端，可以在这里进行处理
+    // 处理前端消息
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 这里仅示例打印接收到的消息
-        System.out.println("Message from FrontEnd: " + message.getPayload());
+        String payload = message.getPayload();
+        System.out.println("Message from FrontEnd: " + payload);
+
+        // 1 解析成 DTO
+        FrontEndSpacesDTO dto = objectMapper.readValue(payload, FrontEndSpacesDTO.class);
+
+        // 2 根据 lotId, spaceRow, spaceColumn 查数据库
+        Optional<ParkingSpaces> optionalPs = parkingSpacesRepository
+            .findByLotIdAndSpaceRowAndSpaceColumn(
+                dto.getLotId(),
+                dto.getSpaceRow(),
+                dto.getSpaceColumn()
+            );
+
+        ParkingSpaces ps;
+        if (optionalPs.isPresent()) {
+            // 更新
+            ps = optionalPs.get();
+            System.out.println("Found existing record, will update it");
+        } else {
+            // 新建
+            ps = new ParkingSpaces();
+            // 手动分配 Space_ID
+            int maxId = parkingSpacesRepository.getMaxSpaceId();
+            int nextId = maxId + 1;
+            ps.setSpace_ID(nextId);
+
+            // 使用前端传来的 Permit_ID
+            ps.setPermit_ID(dto.getPermitId());
+            
+            ps.setLot_ID(dto.getLotId());
+            ps.setSpace_Row(dto.getSpaceRow());
+            ps.setSpace_Column(dto.getSpaceColumn());
+
+            System.out.println("No existing record, created new record with ID=" + nextId);
+        }
+
+        // availability: 0 -> 车位被占 (true)；1 -> 车位空置 (false)
+        ps.setSpace_Parked(dto.getSpaceParked());
+
+        // 4 保存
+        parkingSpacesRepository.save(ps);
+
+        // 5 广播给所有前端
+        broadcastUpdatedSpace(dto.getLotId(), dto.getSpaceRow(), dto.getSpaceColumn());
     }
 
     // 给某个会话发送数据库中所有 ParkingSpaces 的信息，用于初始化
@@ -62,7 +106,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
 
     // 向所有前端广播某个停车位更新后的信息
     public void broadcastUpdatedSpace(Integer lotId, Integer row, Integer column) {
-        // 1. 查询数据库获取最新的空间数据
+        // 1. 查询数据库获取最新的数据
         Optional<ParkingSpaces> optionalPs =
                 parkingSpacesRepository.findByLotIdAndSpaceRowAndSpaceColumn(lotId, row, column);
 
