@@ -57,19 +57,14 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
 
             ParkingSpaces ps;
             if (optionalPs.isPresent()) {
-                // 3a. 已有记录 -> 更新
+                // 3a. 已有记录更新
                 ps = optionalPs.get();
                 System.out.println("Found existing record for lot=" + lotId
                         + ", row=" + row + ", col=" + column
                         + ", will update availability");
             } else {
-                // 3b. 无记录 -> 新建
+                // 3b. 无记录新建
                 ps = new ParkingSpaces();
-
-                // Space_ID 需要手动生成，这里示例用 getMaxSpaceId() + 1
-                int maxId = parkingSpacesRepository.getMaxSpaceId();
-                int nextId = maxId + 1;
-                ps.setSpace_ID(nextId);
 
                 // Permit_ID 暂时为 1
                 ps.setPermit_ID(1);
@@ -77,8 +72,6 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
                 ps.setLot_ID(lotId);
                 ps.setSpace_Row(row);
                 ps.setSpace_Column(column);
-
-                System.out.println("No existing record found; created new record with ID=" + nextId);
             }
 
             // availability: 0 -> 车位被占 (true)；1 -> 车位空置 (false)

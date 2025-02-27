@@ -8,6 +8,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import edu.utah.cs.uparknow.repository.LocationsRepository;
+import edu.utah.cs.uparknow.repository.ParkingLotBoundsRepository;
 import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
 
 @Configuration
@@ -16,6 +18,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
     private ParkingSpacesRepository parkingSpacesRepository;
+
+    @Autowired
+    private LocationsRepository locationsRepository;
+
+    @Autowired
+    private ParkingLotBoundsRepository parkingLotBoundsRepository;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -33,6 +41,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Bean
     public WebSocketHandler frontEndHandler() {
-        return new FrontEndWebSocketHandler(parkingSpacesRepository);
+        return new FrontEndWebSocketHandler(parkingSpacesRepository, locationsRepository, parkingLotBoundsRepository);
     }
 }

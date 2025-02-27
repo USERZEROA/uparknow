@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
 import edu.utah.cs.uparknow.model.ParkingSpaces;
@@ -28,6 +29,7 @@ public class ParkingSpacesService {
         return parkingSpacesRepository.save(parkingSpace);
     }
 
+    @Transactional
     public ParkingSpaces updateParkingSpace(Integer id, ParkingSpaces parkingSpaceDetails) {
         ParkingSpaces parkingSpace = parkingSpacesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + id));

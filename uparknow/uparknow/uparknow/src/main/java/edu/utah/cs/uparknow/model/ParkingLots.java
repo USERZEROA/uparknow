@@ -26,11 +26,6 @@ public class ParkingLots {
     @Column(name = "Lot_Name", nullable = false, length = 64)
     private String Lot_Name;
 
-    // One-to-many relationship, management end - Adjacencies
-    @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("parkingLots-adjacencies")
-    private List<Adjacency> adjacencies;
-
     // One-to-many relationship, management end - ParkingSpaces
     @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("parkingLots-parkingSpaces")

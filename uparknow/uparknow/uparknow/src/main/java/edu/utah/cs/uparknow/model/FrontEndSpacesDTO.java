@@ -27,7 +27,19 @@ public class FrontEndSpacesDTO {
     private Integer permitId;    
 
     @JsonProperty("space_ID")
-    private Integer spaceId;      
+    private Integer spaceId;
+    
+    @JsonProperty("space_Disabled")
+    private Boolean spaceDisabled;
+
+    @JsonProperty("space_Lon")
+    private Double spaceLon;   
+
+    @JsonProperty("space_Lat")
+    private Double spaceLat;   
+
+    @JsonProperty("space_Monitored")
+    private Boolean spaceMonitored;
 
     public FrontEndSpacesDTO() {
     }
@@ -87,5 +99,37 @@ public class FrontEndSpacesDTO {
 
     public void setSpaceId(Integer spaceId) {
         this.spaceId = spaceId;
+    }
+
+    public Boolean getSpaceDisabled() {
+        return spaceDisabled;
+    }
+
+    public void setSpaceDisabled(Boolean spaceDisabled) {
+        this.spaceDisabled = spaceDisabled;
+    }
+
+    public Double getSpaceLon() {
+        return spaceLon;
+    }
+
+    public void setSpaceLon(Double spaceLon) {
+        this.spaceLon = spaceLon;
+    }
+
+    public Double getSpaceLat() {
+        return spaceLat;
+    }
+
+    public void setSpaceLat(Double spaceLat) {
+        this.spaceLat = spaceLat;
+    }
+    
+    public Boolean getSpaceMonitored() {
+        return spaceMonitored;
+    }
+
+    public void setSpaceMonitored(Boolean spaceMonitored) {
+        this.spaceMonitored = spaceMonitored;
     }
 }

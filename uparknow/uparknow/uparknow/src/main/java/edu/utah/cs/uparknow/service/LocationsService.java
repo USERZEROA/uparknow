@@ -32,7 +32,7 @@ public class LocationsService {
         Locations location = locationsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found for this id :: " + id));
 
-        location.setPlace_Name(locationDetails.getPlace_Name());
+        location.setPlaceName(locationDetails.getPlaceName());
         
 
         return locationsRepository.save(location);

@@ -14,7 +14,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.utah.cs.uparknow.model.FrontEndSpacesDTO;
+import edu.utah.cs.uparknow.model.Locations;
+import edu.utah.cs.uparknow.model.ParkingLotBounds;
 import edu.utah.cs.uparknow.model.ParkingSpaces;
+import edu.utah.cs.uparknow.repository.LocationsRepository;
+import edu.utah.cs.uparknow.repository.ParkingLotBoundsRepository;
 import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
 
 // 用于与“前端”通信的 WebSocket Handler
@@ -24,8 +28,13 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public FrontEndWebSocketHandler(ParkingSpacesRepository parkingSpacesRepository) {
-        this.parkingSpacesRepository = parkingSpacesRepository;
+    private final LocationsRepository locationsRepository;
+    private final ParkingLotBoundsRepository parkingLotBoundsRepository;
+
+    public FrontEndWebSocketHandler(ParkingSpacesRepository parkingSpacesRepository, LocationsRepository locationsRepository, ParkingLotBoundsRepository parkingLotBoundsRepository) {
+    this.parkingSpacesRepository = parkingSpacesRepository;
+    this.locationsRepository = locationsRepository;
+    this.parkingLotBoundsRepository = parkingLotBoundsRepository;
     }
 
     @Override
@@ -33,8 +42,40 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
         sessions.add(session);
         System.out.println("New FrontEnd connection: " + session.getId());
 
-        // 一旦前端连接，发送当前数据库的初始化数据
-        sendAllSpacesTo(session);
+        // 先发送停车位信息，再发送位置信息
+        sendAllParkingSpacesTo(session);
+        sendAllLocationsTo(session);
+        sendAllParkingLotBoundsTo(session);
+    }
+    
+    private void sendAllParkingSpacesTo(WebSocketSession session) {
+        try {
+            List<ParkingSpaces> allSpaces = parkingSpacesRepository.findAll();
+            String json = objectMapper.writeValueAsString(allSpaces);
+            session.sendMessage(new TextMessage(json));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendAllLocationsTo(WebSocketSession session) {
+        try {
+            List<Locations> allLocations = locationsRepository.findAll();
+            String json = objectMapper.writeValueAsString(allLocations);
+            session.sendMessage(new TextMessage(json));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendAllParkingLotBoundsTo(WebSocketSession session) {
+        try {
+            List<ParkingLotBounds> allBounds = parkingLotBoundsRepository.findAll();
+            String json = objectMapper.writeValueAsString(allBounds);
+            session.sendMessage(new TextMessage(json));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -54,11 +95,10 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
 
         // 2 根据 lotId, spaceRow, spaceColumn 查数据库
         Optional<ParkingSpaces> optionalPs = parkingSpacesRepository
-            .findByLotIdAndSpaceRowAndSpaceColumn(
-                dto.getLotId(),
-                dto.getSpaceRow(),
-                dto.getSpaceColumn()
-            );
+                .findByLotIdAndSpaceRowAndSpaceColumn(
+                        dto.getLotId(),
+                        dto.getSpaceRow(),
+                        dto.getSpaceColumn());
 
         ParkingSpaces ps;
         if (optionalPs.isPresent()) {
@@ -68,20 +108,19 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
         } else {
             // 新建
             ps = new ParkingSpaces();
-            // 手动分配 Space_ID
-            int maxId = parkingSpacesRepository.getMaxSpaceId();
-            int nextId = maxId + 1;
-            ps.setSpace_ID(nextId);
 
             // 使用前端传来的 Permit_ID
             ps.setPermit_ID(dto.getPermitId());
-            
+
             ps.setLot_ID(dto.getLotId());
             ps.setSpace_Row(dto.getSpaceRow());
             ps.setSpace_Column(dto.getSpaceColumn());
-
-            System.out.println("No existing record, created new record with ID=" + nextId);
         }
+
+        // 新增赋值
+        ps.setSpaceDisabled(dto.getSpaceDisabled());
+        ps.setSpace_Lon(dto.getSpaceLon());
+        ps.setSpace_Lat(dto.getSpaceLat());
 
         // availability: 0 -> 车位被占 (true)；1 -> 车位空置 (false)
         ps.setSpace_Parked(dto.getSpaceParked());
@@ -91,17 +130,6 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
 
         // 5 广播给所有前端
         broadcastUpdatedSpace(dto.getLotId(), dto.getSpaceRow(), dto.getSpaceColumn());
-    }
-
-    // 给某个会话发送数据库中所有 ParkingSpaces 的信息，用于初始化
-    private void sendAllSpacesTo(WebSocketSession session) {
-        try {
-            List<ParkingSpaces> allList = parkingSpacesRepository.findAll();
-            String json = objectMapper.writeValueAsString(allList);
-            session.sendMessage(new TextMessage(json));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // 向所有前端广播某个停车位更新后的信息

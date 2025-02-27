@@ -1,14 +1,10 @@
 package edu.utah.cs.uparknow.model;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,15 +17,22 @@ public class Locations {
 
     @Id
     @Column(name = "Place_ID", nullable = false)
-    private Integer Place_ID;
+    @JsonProperty("Place_ID")
+    private Integer placeId;
 
     @Column(name = "Place_Name", nullable = false, length = 64)
-    private String Place_Name;
+    @JsonProperty("Place_Name")
+    private String placeName;
 
-    // One-to-many relationship, management end - Adjacencies
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("locations-adjacencies")
-    private List<Adjacency> adjacencies;
+    @Column(name = "Place_Name_Abv", nullable = false, length = 64)
+    @JsonProperty("Place_Name_Abv")
+    private String placeNameAbv;
 
-    // other foreign key relationship
+    @Column(name = "Place_Lat", nullable = false)
+    @JsonProperty("Place_Lat")
+    private Double placeLat;
+
+    @Column(name = "Place_Lon", nullable = false)
+    @JsonProperty("Place_Lon")
+    private Double placeLon;
 }
