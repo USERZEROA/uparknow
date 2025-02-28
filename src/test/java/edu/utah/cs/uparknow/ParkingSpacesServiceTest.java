@@ -1,10 +1,5 @@
 package edu.utah.cs.uparknow;
 
-import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
-import edu.utah.cs.uparknow.model.ParkingSpaces;
-import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
-import edu.utah.cs.uparknow.service.ParkingSpacesService;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
+import edu.utah.cs.uparknow.model.ParkingSpaces;
+import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
+import edu.utah.cs.uparknow.service.ParkingSpacesService;
+
 /**
  * 测试 ParkingSpacesService 的业务逻辑
  * 使用 @MockBean 来模拟 ParkingSpacesRepository，不触碰真实数据库
@@ -27,6 +27,7 @@ class ParkingSpacesServiceTest {
     @Autowired
     private ParkingSpacesService parkingSpacesService;
 
+    @SuppressWarnings("removal")
     @MockBean
     private ParkingSpacesRepository parkingSpacesRepository;
 

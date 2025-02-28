@@ -1,7 +1,10 @@
 package edu.utah.cs.uparknow;
 
-import edu.utah.cs.uparknow.model.ParkingSpaces;
-import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
+import java.net.URI;
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,10 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import edu.utah.cs.uparknow.model.ParkingSpaces;
+import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
 
 /**
  * 测试 CameraWebSocketHandler 端点： /ws-camera
@@ -28,10 +29,12 @@ class CameraWebSocketHandlerTest {
     private int port;
 
     // 用 @MockBean 模拟 ParkingSpacesRepository, 避免真实数据库操作
+    @SuppressWarnings("removal")
     @MockBean
     private ParkingSpacesRepository parkingSpacesRepository;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUpMock() {
         // 假设数据库里已经存在一个 Lot_ID=1, Row=1, Column=1 的车位
         ParkingSpaces existing = new ParkingSpaces();
@@ -76,6 +79,7 @@ class CameraWebSocketHandlerTest {
             @Override
             public void onClose(int code, String reason, boolean remote) { }
             @Override
+            @SuppressWarnings("CallToPrintStackTrace")
             public void onError(Exception ex) {
                 ex.printStackTrace();
             }
@@ -110,6 +114,7 @@ class CameraWebSocketHandlerTest {
             @Override
             public void onClose(int code, String reason, boolean remote) { }
             @Override
+            @SuppressWarnings("CallToPrintStackTrace")
             public void onError(Exception ex) {
                 ex.printStackTrace();
             }
@@ -148,6 +153,7 @@ class CameraWebSocketHandlerTest {
             @Override
             public void onClose(int code, String reason, boolean remote) { }
             @Override
+            @SuppressWarnings("CallToPrintStackTrace")
             public void onError(Exception ex) {
                 ex.printStackTrace();
             }

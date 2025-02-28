@@ -1,14 +1,10 @@
 package edu.utah.cs.uparknow;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.*;
-
-import edu.utah.cs.uparknow.model.Locations;
-import edu.utah.cs.uparknow.repository.LocationsRepository;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -18,6 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import edu.utah.cs.uparknow.model.Locations;
+import edu.utah.cs.uparknow.repository.LocationsRepository;
 
 /**
  * 测试 LocationsController 的 REST 接口
@@ -31,6 +36,8 @@ class LocationsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("removal")
+       
     @MockBean
     private LocationsRepository locationsRepository;
 
@@ -108,7 +115,8 @@ class LocationsControllerTest {
      * 测试: POST /api/v1/locations
      * 预期: 创建成功返回 200(201), 同时验证 body 内容
      */
-    @Test
+    @SuppressWarnings("unused")
+@Test
     void testCreateLocation() throws Exception {
         // 发送 JSON:
         String jsonBody = """
@@ -141,7 +149,8 @@ class LocationsControllerTest {
      * 测试: PUT /api/v1/locations/{id}
      * 预期: 更新成功
      */
-    @Test
+    @SuppressWarnings("unused")
+@Test
     void testUpdateLocation() throws Exception {
         // 数据库里原本的地点
         Locations oldLoc = new Locations();

@@ -28,10 +28,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(myCameraHandler(), "/ws-camera")
-                .setAllowedOriginPatterns("https://*.ngrok-free.app", "https://websocketking.com");
+                .setAllowedOriginPatterns("*");
 
         registry.addHandler(frontEndHandler(), "/ws-frontend")
-                .setAllowedOriginPatterns("https://*.ngrok-free.app");
+                .setAllowedOriginPatterns("*");
     }
 
     @Bean
