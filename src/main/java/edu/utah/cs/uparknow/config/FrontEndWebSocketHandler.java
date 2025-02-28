@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -23,6 +25,7 @@ import edu.utah.cs.uparknow.repository.ParkingSpacesRepository;
 
 // 用于与“前端”通信的 WebSocket Handler
 public class FrontEndWebSocketHandler extends TextWebSocketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(FrontEndWebSocketHandler.class);
 
     private final ParkingSpacesRepository parkingSpacesRepository;
     private final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
@@ -37,6 +40,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     this.parkingLotBoundsRepository = parkingLotBoundsRepository;
     }
 
+    @SuppressWarnings("null")
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
@@ -54,7 +58,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
             String json = objectMapper.writeValueAsString(allSpaces);
             session.sendMessage(new TextMessage(json));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error sending all parking spaces to session {}", session.getId(), e);
         }
     }
 
@@ -64,7 +68,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
             String json = objectMapper.writeValueAsString(allLocations);
             session.sendMessage(new TextMessage(json));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error sending all locations to session " + session.getId(), e);
         }
     }
 
@@ -74,10 +78,11 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
             String json = objectMapper.writeValueAsString(allBounds);
             session.sendMessage(new TextMessage(json));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error sending all parking lot bounds to session " + session.getId(), e);
         }
     }
 
+    @SuppressWarnings("null")
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
@@ -85,6 +90,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     }
 
     // 处理前端消息
+    @SuppressWarnings("null")
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
@@ -152,11 +158,12 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Error broadcasting updated space for lot {}, row {}, column {}",
+                        lotId, row, column, e);
             }
         } else {
-            System.out.println("No parking space found for lot=" + lotId
-                    + ", row=" + row + ", col=" + column);
+            logger.warn("No parking space found for lot={}, row={}, col={}", lotId, row, column);
         }
     }
+
 }

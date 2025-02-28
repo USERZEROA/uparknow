@@ -34,6 +34,7 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
         this.frontEndHandler = frontEndHandler;
     }
 
+    @SuppressWarnings("null")
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // 先给摄像头回一个 "OK"
@@ -90,15 +91,33 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
+    @SuppressWarnings("null")
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // 连接成功
         System.out.println("New WebSocket connection: " + session.getId());
     }
 
+    @SuppressWarnings("null")
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // 连接关闭
         System.out.println("WebSocket closed: " + session.getId());
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public ParkingSpacesRepository getParkingSpacesRepository() {
+        return parkingSpacesRepository;
+    }
+
+    public void setParkingSpacesRepository(ParkingSpacesRepository parkingSpacesRepository) {
+        this.parkingSpacesRepository = parkingSpacesRepository;
     }
 }

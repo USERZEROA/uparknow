@@ -25,6 +25,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Autowired
     private ParkingLotBoundsRepository parkingLotBoundsRepository;
 
+    @SuppressWarnings("null")
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(myCameraHandler(), "/ws-camera")
