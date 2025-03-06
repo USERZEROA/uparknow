@@ -41,7 +41,7 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage("OK"));
 
         String jsonPayload = message.getPayload();
-        System.out.println("Received message: " + jsonPayload);
+        // System.out.println("Received message: " + jsonPayload);
 
         // 1. 解析 JSON 为 DTO
         CameraDataDTO dto = objectMapper.readValue(jsonPayload, CameraDataDTO.class);
@@ -60,9 +60,6 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
             if (optionalPs.isPresent()) {
                 // 3a. 已有记录更新
                 ps = optionalPs.get();
-                System.out.println("Found existing record for lot=" + lotId
-                        + ", row=" + row + ", col=" + column
-                        + ", will update availability");
             } else {
                 // 3b. 无记录新建
                 ps = new ParkingSpaces();
@@ -80,9 +77,6 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
 
             // 保存到数据库
             parkingSpacesRepository.save(ps);
-            System.out.println("Saved record for lot=" + lotId
-                    + ", row=" + row + ", col=" + column
-                    + ", availability=" + availability);
 
             // 4. 通知前端更新
             if (frontEndHandler != null) {
@@ -95,14 +89,14 @@ public class CameraWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // 连接成功
-        System.out.println("New WebSocket connection: " + session.getId());
+        // System.out.println("New WebSocket connection: " + session.getId());
     }
 
     @SuppressWarnings("null")
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         // 连接关闭
-        System.out.println("WebSocket closed: " + session.getId());
+        // System.out.println("WebSocket closed: " + session.getId());
     }
 
     public ObjectMapper getObjectMapper() {

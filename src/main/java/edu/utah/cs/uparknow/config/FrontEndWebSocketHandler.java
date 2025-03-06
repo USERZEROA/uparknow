@@ -44,7 +44,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        System.out.println("New FrontEnd connection: " + session.getId());
+        // System.out.println("New FrontEnd connection: " + session.getId());
 
         // 先发送停车位信息，再发送位置信息
         sendAllParkingSpacesTo(session);
@@ -86,7 +86,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
-        System.out.println("FrontEnd connection closed: " + session.getId());
+        // System.out.println("FrontEnd connection closed: " + session.getId());
     }
 
     // 处理前端消息
@@ -94,7 +94,7 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        System.out.println("Message from FrontEnd: " + payload);
+        // System.out.println("Message from FrontEnd: " + payload);
 
         // 1 解析成 DTO
         FrontEndSpacesDTO dto = objectMapper.readValue(payload, FrontEndSpacesDTO.class);
@@ -110,7 +110,6 @@ public class FrontEndWebSocketHandler extends TextWebSocketHandler {
         if (optionalPs.isPresent()) {
             // 更新
             ps = optionalPs.get();
-            System.out.println("Found existing record, will update it");
         } else {
             // 新建
             ps = new ParkingSpaces();

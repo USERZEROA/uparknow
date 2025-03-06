@@ -47,7 +47,7 @@ class ParkingSpacesServiceTest {
         List<ParkingSpaces> result = parkingSpacesService.getAllParkingSpaces();
         // 断言
         Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals(100, result.get(0).getSpace_ID());
+        Assertions.assertEquals(100, result.get(0).getSpace_ID().intValue());
         Assertions.assertTrue(result.get(0).getSpace_Parked());
     }
 
@@ -71,16 +71,16 @@ class ParkingSpacesServiceTest {
 
         // 验证
         Assertions.assertNotNull(created);
-        Assertions.assertEquals(999, created.getSpace_ID());
-        Assertions.assertEquals(3, created.getSpace_Row());
+        Assertions.assertEquals(999, created.getSpace_ID().intValue());
+        Assertions.assertEquals(3, created.getSpace_Row().intValue());
         Assertions.assertFalse(created.getSpace_Parked());
 
         // 验证 repository.save() 调用
         ArgumentCaptor<ParkingSpaces> captor = ArgumentCaptor.forClass(ParkingSpaces.class);
         Mockito.verify(parkingSpacesRepository).save(captor.capture());
         ParkingSpaces savedObj = captor.getValue();
-        Assertions.assertEquals(3, savedObj.getSpace_Row());
-        Assertions.assertEquals(4, savedObj.getSpace_Column());
+        Assertions.assertEquals(3, savedObj.getSpace_Row().intValue());
+        Assertions.assertEquals(4, savedObj.getSpace_Column().intValue());
     }
 
     @Test
@@ -93,10 +93,10 @@ class ParkingSpacesServiceTest {
         existing.setSpace_Parked(false);
 
         Mockito.when(parkingSpacesRepository.findById(1))
-               .thenReturn(Optional.of(existing));
+                .thenReturn(Optional.of(existing));
 
         Mockito.when(parkingSpacesRepository.save(Mockito.any(ParkingSpaces.class)))
-               .thenAnswer(i -> i.getArgument(0));
+                .thenAnswer(i -> i.getArgument(0));
 
         // 要更新为 row=2, col=2, parked=true
         ParkingSpaces updateDetails = new ParkingSpaces();
@@ -108,19 +108,22 @@ class ParkingSpacesServiceTest {
         ParkingSpaces updated = parkingSpacesService.updateParkingSpace(1, updateDetails);
 
         // 验证更新结果
-        Assertions.assertEquals(2, updated.getSpace_Row());
-        Assertions.assertEquals(2, updated.getSpace_Column());
+        Assertions.assertEquals(2, updated.getSpace_Row().intValue());
+        Assertions.assertEquals(2, updated.getSpace_Column().intValue());
         Assertions.assertTrue(updated.getSpace_Parked());
     }
 
     @Test
     void testUpdateParkingSpace_NotFound() {
-        // 找不到 ID=999
         Mockito.when(parkingSpacesRepository.findById(999))
-               .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class,
-            () -> parkingSpacesService.updateParkingSpace(999, new ParkingSpaces()));
+        ResourceNotFoundException ex = Assertions.assertThrows(
+            ResourceNotFoundException.class,
+            () -> parkingSpacesService.updateParkingSpace(999, new ParkingSpaces())
+        );
+
+        Assertions.assertTrue(ex.getMessage().contains("not found"));
     }
 
     @Test
@@ -143,7 +146,11 @@ class ParkingSpacesServiceTest {
         Mockito.when(parkingSpacesRepository.findById(999))
                .thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class,
-            () -> parkingSpacesService.deleteParkingSpace(999));
+        ResourceNotFoundException ex = Assertions.assertThrows(
+        ResourceNotFoundException.class,
+        () -> parkingSpacesService.deleteParkingSpace(999));
+    
+        Assertions.assertTrue(ex.getMessage().contains("not found"));
     }
+    
 }
