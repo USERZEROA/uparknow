@@ -1,9 +1,7 @@
 package edu.utah.cs.uparknow.model;
 
 import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,6 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,36 +23,35 @@ import lombok.NoArgsConstructor;
 public class Closures {
 
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "Space_ID", nullable = false)
-    private Integer Space_ID;
+    private Integer spaceId;
 
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "Mana_ID", nullable = false)
-    private Integer Mana_ID;
+    private Integer manaId;
 
     @Id
+    @EqualsAndHashCode.Include
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "Mod_Start", nullable = false)
-    private Date Mod_Start;
+    private Date modStart;
 
     @Column(name = "Mod_End")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date Mod_End;
+    private Date modEnd;
 
-    @Column(name = "Mod_Type", nullable = false, length = 16)
-    private String Mod_Type;
+    @Column(name = "Mod_Reason", nullable = false, columnDefinition = "TEXT")
+    private String modReason;
 
-    // Foreign key relationship - ParkingSpaces
     @ManyToOne
     @JoinColumn(name = "Space_ID", referencedColumnName = "Space_ID", insertable = false, updatable = false)
     @JsonBackReference("parkingSpaces-closures")
     private ParkingSpaces parkingSpace;
 
-    // Foreign key relationship - Managers
     @ManyToOne
     @JoinColumn(name = "Mana_ID", referencedColumnName = "Mana_ID", insertable = false, updatable = false)
     @JsonBackReference("managers-closures")
     private Managers manager;
-
-    // other foreign key relationship
 }

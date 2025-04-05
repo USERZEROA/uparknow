@@ -2,7 +2,6 @@ package edu.utah.cs.uparknow.controller;
 
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
 import edu.utah.cs.uparknow.model.Closures;
 import edu.utah.cs.uparknow.model.ClosuresId;
@@ -34,12 +32,12 @@ public class ClosuresController {
 
     @GetMapping("/closures/{spaceId}/{manaId}/{modStart}")
     public ResponseEntity<Closures> getClosuresById(
-            @PathVariable("spaceId") Integer spaceId,
-            @PathVariable("manaId") Integer manaId,
-            @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart) {
+        @PathVariable("spaceId") Integer spaceId,
+        @PathVariable("manaId") Integer manaId,
+        @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart) {
         ClosuresId id = new ClosuresId(spaceId, manaId, modStart);
         Closures closures = closuresService.getClosuresById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Closures not found for id :: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Closures not found for id :: " + id));
         return ResponseEntity.ok().body(closures);
     }
 
@@ -51,10 +49,10 @@ public class ClosuresController {
 
     @PutMapping("/closures/{spaceId}/{manaId}/{modStart}")
     public ResponseEntity<Closures> updateClosures(
-            @PathVariable("spaceId") Integer spaceId,
-            @PathVariable("manaId") Integer manaId,
-            @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart,
-            @RequestBody Closures closuresDetails) {
+        @PathVariable("spaceId") Integer spaceId,
+        @PathVariable("manaId") Integer manaId,
+        @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart,
+        @RequestBody Closures closuresDetails) {
         ClosuresId id = new ClosuresId(spaceId, manaId, modStart);
         Closures updatedClosures = closuresService.updateClosures(id, closuresDetails);
         return ResponseEntity.ok(updatedClosures);
@@ -62,9 +60,9 @@ public class ClosuresController {
 
     @DeleteMapping("/closures/{spaceId}/{manaId}/{modStart}")
     public ResponseEntity<Void> deleteClosures(
-            @PathVariable("spaceId") Integer spaceId,
-            @PathVariable("manaId") Integer manaId,
-            @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart) {
+        @PathVariable("spaceId") Integer spaceId,
+        @PathVariable("manaId") Integer manaId,
+        @PathVariable("modStart") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date modStart) {
         ClosuresId id = new ClosuresId(spaceId, manaId, modStart);
         closuresService.deleteClosures(id);
         return ResponseEntity.noContent().build();

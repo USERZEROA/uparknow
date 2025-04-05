@@ -1,7 +1,6 @@
 package edu.utah.cs.uparknow.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
 import edu.utah.cs.uparknow.model.Locations;
 import edu.utah.cs.uparknow.service.LocationsService;
@@ -32,7 +30,7 @@ public class LocationsController {
     @GetMapping("/locations/{id}")
     public ResponseEntity<Locations> getLocationById(@PathVariable("id") Integer id) {
         Locations location = locationsService.getLocationById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Location not found for this id :: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Location not found for this id :: " + id));
         return ResponseEntity.ok().body(location);
     }
 
@@ -43,7 +41,7 @@ public class LocationsController {
 
     @PutMapping("/locations/{id}")
     public ResponseEntity<Locations> updateLocation(@PathVariable("id") Integer id,
-                                                     @RequestBody Locations locationDetails) {
+                                                    @RequestBody Locations locationDetails) {
         Locations updatedLocation = locationsService.updateLocation(id, locationDetails);
         return ResponseEntity.ok(updatedLocation);
     }

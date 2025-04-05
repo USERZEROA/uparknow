@@ -3,10 +3,11 @@ package edu.utah.cs.uparknow.model;
 import java.util.List;
 
 public class CameraDataDTO {
-    private Integer role;                     // "Role": 1
-    private Integer parkingLot;               // "ParkingLot": 1
-    private List<Integer> parkingSpacePosition; // "ParkingSpacePosition": [1,1]
-    private Integer availability;             // "Availability": 1->没车, 0->有车
+    
+    private Integer role;
+    private Integer parkingLot;
+    private List<Integer> parkingSpacePosition;
+    private Integer availability;
 
     public CameraDataDTO() {
     }

@@ -1,7 +1,6 @@
 package edu.utah.cs.uparknow.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ParkingLotBounds {
+    
     @Id
     @Column(name = "Lot_ID", nullable = false)
     @JsonProperty("lot_ID")

@@ -1,9 +1,7 @@
 package edu.utah.cs.uparknow.model;
 
 import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -35,11 +33,8 @@ public class Telemetry {
     @Column(name = "Space_ID", nullable = false)
     private Integer Space_ID;
 
-    // Foreign key relationship - ParkingSpaces
     @ManyToOne
     @JoinColumn(name = "Space_ID", referencedColumnName = "Space_ID", insertable = false, updatable = false)
     @JsonBackReference("parkingSpaces-telemetryList")
     private ParkingSpaces parkingSpace;
-
-    // other Foreign key relationship
 }

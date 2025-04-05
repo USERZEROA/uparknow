@@ -9,16 +9,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    /**
-    * Handles concurrent conflict exceptions (optimistic locking conflict).
-    * Returns a 409 Conflict.
-    */
+    
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public String handleOptimisticLockFailure(ObjectOptimisticLockingFailureException ex) {
         return "Concurrency conflict: " + ex.getMessage();
     }
-
- 
 }

@@ -6,58 +6,54 @@ import java.util.Objects;
 
 public class ClosuresId implements Serializable {
 
-    private Integer Space_ID;
-    private Integer Mana_ID;
-    private Date Mod_Start;
+    private Integer spaceId;
+    private Integer manaId;
+    private Date modStart;
 
     public ClosuresId() {}
 
-    public ClosuresId(Integer Space_ID, Integer Mana_ID, Date Mod_Start) {
-        this.Space_ID = Space_ID;
-        this.Mana_ID = Mana_ID;
-        this.Mod_Start = Mod_Start;
+    public ClosuresId(Integer spaceId, Integer manaId, Date modStart) {
+        this.spaceId = spaceId;
+        this.manaId = manaId;
+        this.modStart = modStart;
     }
 
-    // Getters and Setters
-    public Integer getSpace_ID() {
-        return Space_ID;
+    public Integer getSpaceId() {
+        return spaceId;
     }
 
-    public void setSpace_ID(Integer Space_ID) {
-        this.Space_ID = Space_ID;
+    public void setSpaceId(Integer spaceId) {
+        this.spaceId = spaceId;
     }
 
-    public Integer getMana_ID() {
-        return Mana_ID;
+    public Integer getManaId() {
+        return manaId;
     }
 
-    public void setMana_ID(Integer Mana_ID) {
-        this.Mana_ID = Mana_ID;
+    public void setManaId(Integer manaId) {
+        this.manaId = manaId;
     }
 
-    public Date getMod_Start() {
-        return Mod_Start;
+    public Date getModStart() {
+        return modStart;
     }
 
-    public void setMod_Start(Date Mod_Start) {
-        this.Mod_Start = Mod_Start;
+    public void setModStart(Date modStart) {
+        this.modStart = modStart;
     }
 
-    // rewrite equals() and hashCode()
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof ClosuresId)) return false;
         ClosuresId that = (ClosuresId) o;
-
-        return Objects.equals(Space_ID, that.Space_ID) &&
-               Objects.equals(Mana_ID, that.Mana_ID) &&
-               Objects.equals(Mod_Start, that.Mod_Start);
+        return Objects.equals(getSpaceId(), that.getSpaceId()) &&
+               Objects.equals(getManaId(), that.getManaId()) &&
+               Objects.equals(getModStart(), that.getModStart());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Space_ID, Mana_ID, Mod_Start);
+        return Objects.hash(getSpaceId(), getManaId(), getModStart());
     }
 }

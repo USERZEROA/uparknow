@@ -2,15 +2,14 @@ package edu.utah.cs.uparknow.model;
 
 import java.util.Date;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -53,10 +52,10 @@ public class ParkingSpaces {
     private Boolean spaceDisabled = false;
     
     @Column(name = "Space_Lon")
-    private Double Space_Lon;     // 车位经度
+    private Double Space_Lon;
 
     @Column(name = "Space_Lat")
-    private Double Space_Lat;     // 车位纬度
+    private Double Space_Lat;
 
     @Column(name = "Lot_ID", nullable = false)
     private Integer Lot_ID;
@@ -83,9 +82,8 @@ public class ParkingSpaces {
     @JsonBackReference("permits-parkingSpaces")
     private Permits permit;
 
-    @OneToMany(mappedBy = "parkingSpace", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parkingSpace", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference("parkingSpaces-closures")
-    @JsonIgnore
     private List<Closures> closures;
 
     @OneToMany(mappedBy = "parkingSpace", cascade = CascadeType.ALL, orphanRemoval = true)

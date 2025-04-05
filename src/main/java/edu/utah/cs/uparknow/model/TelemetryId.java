@@ -16,7 +16,6 @@ public class TelemetryId implements Serializable {
         this.Space_ID = Space_ID;
     }
 
-    // Getters 和 Setters
     public Date getTel_Datetime() {
         return Tel_Datetime;
     }

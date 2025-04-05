@@ -8,6 +8,6 @@ class UparknowApplicationTests {
 
 	@Test
 	void contextLoads() {
-	}
 
+	}
 }

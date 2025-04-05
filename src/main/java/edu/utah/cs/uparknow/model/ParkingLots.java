@@ -1,9 +1,7 @@
 package edu.utah.cs.uparknow.model;
 
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +24,6 @@ public class ParkingLots {
     @Column(name = "Lot_Name", nullable = false, length = 64)
     private String Lot_Name;
 
-    // One-to-many relationship, management end - ParkingSpaces
     @OneToMany(mappedBy = "parkingLot", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("parkingLots-parkingSpaces")
     private List<ParkingSpaces> parkingSpaces;

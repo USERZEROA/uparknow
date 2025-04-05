@@ -1,7 +1,6 @@
 package edu.utah.cs.uparknow.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
 import edu.utah.cs.uparknow.model.ParkingSpaces;
 import edu.utah.cs.uparknow.repository.ParkingLotsRepository;
@@ -32,75 +30,66 @@ public class ParkingSpacesController {
     @Autowired
     private PermitsRepository permitsRepository;
 
-    // get all parking space
     @GetMapping("/parkingspaces")
     public List<ParkingSpaces> getAllParkingSpaces() {
         return parkingSpacesRepository.findAll();
     }
 
-    // get a single parking space according to Space_ID
     @GetMapping("/parkingspaces/{spaceId}")
     public ResponseEntity<ParkingSpaces> getParkingSpaceById(@PathVariable(value = "spaceId") Integer spaceId)
             throws ResourceNotFoundException {
         ParkingSpaces parkingSpace = parkingSpacesRepository.findById(spaceId)
-                .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
+        .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
         return ResponseEntity.ok().body(parkingSpace);
     }
 
-    // creat new parking space
     @PostMapping("/parkingspaces")
     public ResponseEntity<ParkingSpaces> createParkingSpace(@RequestBody ParkingSpaces parkingSpace) throws ResourceNotFoundException {
-        // set the ParkingLots
         if (parkingSpace.getLot_ID() != null) {
             parkingSpace.setParkingLot(parkingLotsRepository.findById(parkingSpace.getLot_ID())
-                    .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for id :: " + parkingSpace.getLot_ID())));
+            .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for id :: " + parkingSpace.getLot_ID())));
         }
 
-        // set the Permits
         if (parkingSpace.getPermit_ID() != null) {
             parkingSpace.setPermit(permitsRepository.findById(parkingSpace.getPermit_ID())
-                    .orElseThrow(() -> new ResourceNotFoundException("Permit not found for id :: " + parkingSpace.getPermit_ID())));
+            .orElseThrow(() -> new ResourceNotFoundException("Permit not found for id :: " + parkingSpace.getPermit_ID())));
         }
-
         ParkingSpaces createdParkingSpace = parkingSpacesRepository.save(parkingSpace);
         return ResponseEntity.status(201).body(createdParkingSpace);
     }
 
-    // update
     @PutMapping("/parkingspaces/{spaceId}")
     public ResponseEntity<ParkingSpaces> updateParkingSpace(@PathVariable(value = "spaceId") Integer spaceId,
             @RequestBody ParkingSpaces parkingSpaceDetails) throws ResourceNotFoundException {
+
         ParkingSpaces parkingSpace = parkingSpacesRepository.findById(spaceId)
-                .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
+        .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
 
         parkingSpace.setSpace_Row(parkingSpaceDetails.getSpace_Row());
         parkingSpace.setSpace_Column(parkingSpaceDetails.getSpace_Column());
         parkingSpace.setSpace_Parked(parkingSpaceDetails.getSpace_Parked());
         parkingSpace.setSpace_Sch(parkingSpaceDetails.getSpace_Sch());
 
-        // update the ParkingLots
         if (parkingSpaceDetails.getLot_ID() != null) {
             parkingSpace.setParkingLot(parkingLotsRepository.findById(parkingSpaceDetails.getLot_ID())
-                    .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for id :: " + parkingSpaceDetails.getLot_ID())));
+            .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for id :: " + parkingSpaceDetails.getLot_ID())));
         }
 
-        // update Permits
         if (parkingSpaceDetails.getPermit_ID() != null) {
             parkingSpace.setPermit(permitsRepository.findById(parkingSpaceDetails.getPermit_ID())
-                    .orElseThrow(() -> new ResourceNotFoundException("Permit not found for id :: " + parkingSpaceDetails.getPermit_ID())));
+            .orElseThrow(() -> new ResourceNotFoundException("Permit not found for id :: " + parkingSpaceDetails.getPermit_ID())));
         }
 
         final ParkingSpaces updatedParkingSpace = parkingSpacesRepository.save(parkingSpace);
         return ResponseEntity.ok(updatedParkingSpace);
     }
 
-    // deldte
     @DeleteMapping("/parkingspaces/{spaceId}")
     public ResponseEntity<Void> deleteParkingSpace(@PathVariable(value = "spaceId") Integer spaceId)
             throws ResourceNotFoundException {
-        ParkingSpaces parkingSpace = parkingSpacesRepository.findById(spaceId)
-                .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
 
+        ParkingSpaces parkingSpace = parkingSpacesRepository.findById(spaceId)
+        .orElseThrow(() -> new ResourceNotFoundException("ParkingSpace not found for this id :: " + spaceId));
         parkingSpacesRepository.delete(parkingSpace);
         return ResponseEntity.noContent().build();
     }

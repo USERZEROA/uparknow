@@ -1,11 +1,10 @@
 package edu.utah.cs.uparknow.model;
 
 import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true) // 忽略未知属性
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FrontEndSpacesDTO {
 
     @JsonProperty("space_Row")
@@ -44,7 +43,6 @@ public class FrontEndSpacesDTO {
     public FrontEndSpacesDTO() {
     }
 
-    // Getters 和 Setters
     public Integer getSpaceRow() {
         return spaceRow;
     }

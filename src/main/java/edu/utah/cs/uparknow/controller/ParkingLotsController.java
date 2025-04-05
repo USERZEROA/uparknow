@@ -1,7 +1,6 @@
 package edu.utah.cs.uparknow.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import edu.utah.cs.uparknow.exception.ResourceNotFoundException;
 import edu.utah.cs.uparknow.model.ParkingLots;
 import edu.utah.cs.uparknow.service.ParkingLotsService;
@@ -32,7 +30,7 @@ public class ParkingLotsController {
     @GetMapping("/parkinglots/{id}")
     public ResponseEntity<ParkingLots> getParkingLotById(@PathVariable("id") Integer id) {
         ParkingLots parkingLot = parkingLotsService.getParkingLotById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for this id :: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("ParkingLot not found for this id :: " + id));
         return ResponseEntity.ok().body(parkingLot);
     }
 
@@ -43,7 +41,7 @@ public class ParkingLotsController {
 
     @PutMapping("/parkinglots/{id}")
     public ResponseEntity<ParkingLots> updateParkingLot(@PathVariable("id") Integer id,
-                                                       @RequestBody ParkingLots parkingLotDetails) {
+                                                        @RequestBody ParkingLots parkingLotDetails) {
         ParkingLots updatedParkingLot = parkingLotsService.updateParkingLot(id, parkingLotDetails);
         return ResponseEntity.ok(updatedParkingLot);
     }
