@@ -1,3 +1,11 @@
+# uparknow
+
+![license](https://img.shields.io/badge/License-Viewing_Only_/_Proprietary_🔒-black)
+
+> ⚠️ This repository is proprietary.  
+> Viewing is permitted for evaluation purposes only.  
+> Use, copy, modification, and redistribution are strictly prohibited.
+
 # UParkNow
 
 ## About the Project
